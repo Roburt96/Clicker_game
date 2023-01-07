@@ -3,8 +3,8 @@
 3. background
 4. screen_size - 1000x650
 6. damage_font_screen (up and down)
-7. BUFS - top left on screen 
-a) dmg_per_click -> starting_dmg =  1 -> dmg_inc = ceil(current_dmg * 1,1)      
+7. BUFS - top left on screen
+a) dmg_per_click -> starting_dmg =  1 -> dmg_inc = ceil(current_dmg * 1,1)
 gold_for_buff -> level_1 = 3 -> level_gold_inc = ceil(current_level * 1.2) --> level += 1
 
 b) HP_monster, gold_drop -> level 1-9 -> monster_hp = 12 -> gold_per_kill = 1
