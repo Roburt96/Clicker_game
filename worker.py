@@ -9,7 +9,7 @@ class Worker:
     def __init__(self, start_gold=1, seconds_for_gold=15, start_gold_cost=18):
         self.start_gold = start_gold
         self.start_gold_cost = start_gold_cost
-        self.__seconds_for_gold = seconds_for_gold
+        self.seconds_for_gold = seconds_for_gold
         self.current_level = 0
 
     @property
@@ -41,7 +41,7 @@ class Worker:
     @seconds_for_gold.setter
     def seconds_for_gold(self, value):
         if isinstance(value, int):
-            self.__start_gold_cost = value
+            self.__seconds_for_gold = value
         else:
             raise ValueError("Seconds must be positive number.")
 
