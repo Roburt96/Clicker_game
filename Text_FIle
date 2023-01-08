@@ -3,9 +3,9 @@
 3. background
 4. screen_size - 1000x650
 6. damage_font_screen (up and down)
-7. BUFS - top left on screen
-a) dmg_per_click -> starting_dmg =  1 -> dmg_inc = ceil(current_dmg * 1,1)
-gold_for_buff -> level_1 = 3 -> level_gold_inc = ceil(current_level * 1.2) --> level += 1
+7. BUFFS - top left on screen
+a) dmg_per_click -> default =  1 -> dmg_inc = ceil(current_dmg * 1,1)  -> DONE
+gold_for_buff -> default = 3 -> level_gold_inc = ceil(current_level * 1.2) --> level += 1  -> DONE
 
 b) HP_monster, gold_drop -> level 1-9 -> monster_hp = 12 -> gold_per_kill = 1
 level 10 (BOSS) -> hp_monster = ceil(current_level(monster_hp) - 1 * 12,5) -> gold_per_kill = 20
@@ -18,5 +18,5 @@ every 6 -> levels gold_per_sec -= 2
 8. WORKER_PLACEMENT(UPPER RIGHT)
 9. HP_MONSTER_BAR -> current_hp_of_monster (red color bar)
 10. CURRENT_LEVEL(DOWN RIGHT), CURRENT_GOLD(UPPER LEFT)
-11. wallpapers(icons) -> worker, cursor, monter_platform_placement\
+11. wallpapers(icons) -> worker, cursor, monster_platform_placement\
 12. hit_marker_sound_per_click
