@@ -8,7 +8,7 @@ class ClickBuff:
     def __init__(self, start_damage=1, start_gold_cost=3):
         self.start_damage = start_damage
         self.start_gold_cost = start_gold_cost
-        self.current_level = 1
+        self.current_level = 0
 
     @property
     def start_damage(self):
