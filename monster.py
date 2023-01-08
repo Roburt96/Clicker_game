@@ -15,6 +15,7 @@ class Monster:
         self.gold_drop_normal_monster = gold_drop_normal_monster
         self.gold_per_boss_kill = gold_per_boss_kill
         self.current_level = 1
+        self.dead_monster = False
 
     @property
     def monster_hp(self):
@@ -63,15 +64,20 @@ class Monster:
             """
             self.prepare_next_level()
             self.attacked_monster = self.monster_hp
+            self.dead_monster = True
+
+    def check_if_dead(self):
+        if self.dead_monster:
+            self.dead_monster = False
+            return True
 
     def prepare_next_level(self):
         if self.current_level < 10:
             self.gold_drop_normal_monster = 1
-        elif not self.check_for_boss():
-            self.monster_hp = int(self.monster_hp * Monster.__MONSTER_HEALTH_INCREASE_AFTER_LEVEL_10)
+        elif self.check_for_boss():
             self.gold_drop_normal_monster = ceil(self.gold_drop_normal_monster *
                                                  Monster.__GOLD_INCREASE_PER_NORMAL_KILL)
-        else:
+            self.monster_hp = int(self.monster_hp * Monster.__MONSTER_HEALTH_INCREASE_AFTER_LEVEL_10)
             self.boss_health = ceil(self.boss_health * Monster.__BOSS_HEALTH_INCREASE)
             self.gold_per_boss_kill = ceil(self.gold_per_boss_kill * Monster.__GOLD_INCREASE_PER_BOSS_KILL)
         self.current_level += 1
@@ -106,9 +112,9 @@ if you wish to start with higher values, just put values that are higher than th
 #     print()
 
 
-click_power_test = ClickBuff()
-monster = Monster()
-for _ in range(12):  # test for level 1
-    monster.attack_monster(click_power_test)
-    print(monster)
-    print()
+# click_power_test = ClickBuff()
+# monster = Monster()
+# for _ in range(12):  # test for level 1
+#     monster.attack_monster(click_power_test)
+#     print(monster)
+#     print()
