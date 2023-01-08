@@ -46,8 +46,8 @@ class ClickBuff:
 
 # test = ClickBuff(1, 3) # this is optional and does not need to be typed
 # test = ClickBuff(50, 50) # if you wish to start with higher values
-
-
+#
+#
 # test = ClickBuff()
 # for _ in range(5):
 #     test.level_up()

@@ -1,6 +1,7 @@
+import os
 import pygame
 
-# screen and background
+# screen / background
 screen = pygame.display.set_mode((1000, 650))
 background = pygame.image.load('bg_cursor_images/background.png')
 land_background = pygame.image.load('bg_cursor_images/land_monster.png')
@@ -8,6 +9,23 @@ mouse = pygame.image.load('bg_cursor_images/cursor1.png')
 
 # title and game icon
 pygame.display.set_caption('Clicker game')
+
+# append monster/ worker/ boss
+# monster
+monsters = []
+for filename in os.listdir('monster_wallpaper'):
+    if filename.endswith('.png'):
+        monsters.append(filename)
+# boss
+boss = []
+for filename in os.listdir('boss_wallpaper'):
+    if filename.endswith('.png'):
+        boss.append(filename)
+# worker
+worker = []
+for filename in os.listdir('worker_wallpaper'):
+    if filename.endswith('.png'):
+        boss.append(filename)
 
 
 run = True
@@ -18,6 +36,9 @@ while run:
 
     # land background
     screen.blit(land_background, (550, 250))
+
+    # monsters test
+    # screen.blit(monster, (680, 330))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
@@ -40,6 +61,6 @@ while run:
 
 
 
-
     pygame.display.update()
+
 pygame.quit()
