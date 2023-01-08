@@ -5,12 +5,12 @@ import pygame
 screen = pygame.display.set_mode((1000, 650))
 
 # wallpapers
-background = pygame.image.load('bg_cursor_images/background.png')
+background = pygame.image.load('bg_cursor_images/bg.png')
 land_background = pygame.image.load('bg_cursor_images/land_monster.png')
-mouse = pygame.image.load('bg_cursor_images/cursor1.png')
+mouse = pygame.image.load('bg_cursor_images/cursor.png')
 hp_bar = pygame.image.load('bg_cursor_images/hp.png')
 mine = pygame.image.load('bg_cursor_images/mine.jpg')
-bg_for_upgrade = pygame.image.load('bg_cursor_images/bg.jpg')
+bg_for_upgrade = pygame.image.load('bg_cursor_images/bg_upgrade.jpg')
 
 # title and game icon
 pygame.display.set_caption('Clicker game')
