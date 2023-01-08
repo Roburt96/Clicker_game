@@ -51,6 +51,8 @@ class Worker:
         self.start_gold_cost = ceil(self.start_gold_cost * Worker.__GOLD_COST_PER_LEVEL)
         if self.current_level % 6 == 0:
             self.seconds_for_gold -= Worker.__SEC_DECREASE_PER_6_LEVELS
+            if self.seconds_for_gold < 0:
+                self.seconds_for_gold = 0
 
     def __repr__(self):
         return f"Worker status:\n" \

@@ -11,7 +11,8 @@ b) HP_monster, gold_drop -> level 1-9 -> monster_hp = 12 -> gold_per_kill = 1
 level 10 (BOSS) -> hp_monster = ceil(current_level(monster_hp) - 1 * 12,5) -> gold_per_kill = 20
 level 11-19 -> monster_hp = int(current_monster_hp * 2,3) -> gold_per_kil = int(current_gold_per_kill * 1,2)
 
-c) worker_price, worker_gold_making -> starting_gold = 3 -> level 1-5 ->  level += 1 -> ceil(current_gold * 1,2) -> DEFAULT(gold_per_sec = 15 (level 1-5))
+c) worker_price, worker_gold_making -> starting_gold = 3 -> level 1-5 ->  level += 1 -> ceil(current_gold * 1,2)
+-> DEFAULT(gold_per_sec = 15 (level 1-5))
 every 6 -> levels gold_per_sec -= 2
 
 
