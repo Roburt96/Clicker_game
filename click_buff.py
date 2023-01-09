@@ -1,4 +1,5 @@
 from math import ceil
+from statistics import *
 
 
 class ClickBuff:
@@ -33,9 +34,17 @@ class ClickBuff:
             raise ValueError("Start gold must be integer.")
 
     def level_up(self):
-        self.start_damage = ceil(self.start_damage * ClickBuff.__DMG_INCREASE_PER_LEVEL)
-        self.start_gold_cost = ceil(self.start_gold_cost * ClickBuff.__GOLD_COST_PER_LEVEL)
-        self.current_level += 1
+        if statis_test.current_gold >= self.start_gold_cost:
+            if self.current_level == 0:
+                statis_test.start_dmg += 1
+                self.current_level += 1
+            else:
+                statis_test.start_dmg += ceil(self.start_damage * ClickBuff.__DMG_INCREASE_PER_LEVEL)
+                self.start_damage = ceil(self.start_damage * ClickBuff.__DMG_INCREASE_PER_LEVEL)
+                self.start_gold_cost = ceil(self.start_gold_cost * ClickBuff.__GOLD_COST_PER_LEVEL)
+                self.current_level += 1
+        else:
+            print('need money')
 
     def __repr__(self):
         return f"Current ClickBuff statistics:\n" \
@@ -44,6 +53,7 @@ class ClickBuff:
                f"Current BUFF level - {self.current_level}"
 
 
+statis_test = Statistics()
 # test = ClickBuff(1, 3) # this is optional and does not need to be typed
 # test = ClickBuff(50, 50) # if you wish to start with higher values
 #
