@@ -11,7 +11,7 @@ class Monster:
     def __init__(self, monster_hp=12, gold_drop_normal_monster=1, gold_per_boss_kill=20):
         self.monster_hp = monster_hp
         self.attacked_monster = self.monster_hp
-        self.boss_health = monster_hp
+        self.boss_health = monster_hp * Monster.__BOSS_HEALTH_INCREASE
         self.gold_drop_normal_monster = gold_drop_normal_monster
         self.gold_per_boss_kill = gold_per_boss_kill
         self.current_level = 1
@@ -62,8 +62,6 @@ class Monster:
             BEFORE IT GOES TO PREPARE_NEXT_LEVEL(), IT HAS TO REWARD THE PLAYER WITH GOLD
             ALSO PARAMETER MUST BE PASSED ,TO ATTACK_MONSTER() METHOD
             """
-            self.prepare_next_level()
-            self.attacked_monster = self.monster_hp
             self.dead_monster = True
 
     def check_if_dead(self):
@@ -72,15 +70,18 @@ class Monster:
             return True
 
     def prepare_next_level(self):
+        self.current_level += 1
         if self.current_level < 10:
             self.gold_drop_normal_monster = 1
         elif self.check_for_boss():
             self.gold_drop_normal_monster = ceil(self.gold_drop_normal_monster *
                                                  Monster.__GOLD_INCREASE_PER_NORMAL_KILL)
+            self.boss_health = ceil(self.monster_hp * Monster.__BOSS_HEALTH_INCREASE)
             self.monster_hp = int(self.monster_hp * Monster.__MONSTER_HEALTH_INCREASE_AFTER_LEVEL_10)
-            self.boss_health = ceil(self.boss_health * Monster.__BOSS_HEALTH_INCREASE)
             self.gold_per_boss_kill = ceil(self.gold_per_boss_kill * Monster.__GOLD_INCREASE_PER_BOSS_KILL)
-        self.current_level += 1
+            self.attacked_monster = self.boss_health
+        if self.current_level < 10 or self.current_level % 10 != 0:
+            self.attacked_monster = self.monster_hp
 
     def check_for_boss(self):
         return self.current_level % 10 == 0

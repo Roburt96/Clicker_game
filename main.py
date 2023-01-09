@@ -17,9 +17,6 @@ def numbers_format(num):
     return f"{str(num).rstrip('0').rstrip('.')}{['', 'K', 'M', 'B', 'T'][magnitude]}"
 
 
-# print(numbers_format(999999999999))
-
-
 def load_wallpapers():
     wallpapers = ('bg_cursor_images/bg.png',
                   'bg_cursor_images/land_monster.png',
@@ -34,16 +31,14 @@ def load_wallpapers():
     for filename in os.listdir('monster_wallpaper'):
         if filename.endswith('.png'):
             monsters_pictures.append(pygame.image.load(f'monster_wallpaper/{filename}'))
-    monsters_pictures = monsters_pictures * len(os.listdir('boss_wallpaper'))
-    position_boss_every_10_levels = 9
+    bosses_pictures = []
     for filename in os.listdir('boss_wallpaper'):
         if filename.endswith('.png'):
-            monsters_pictures.insert(position_boss_every_10_levels, pygame.image.load(f'boss_wallpaper/{filename}'))
-            position_boss_every_10_levels += 10
-    return loaded_wallpapers, deque(monsters_pictures)
+            bosses_pictures.append(pygame.image.load(f'boss_wallpaper/{filename}'))
+    return loaded_wallpapers, deque(monsters_pictures), deque(bosses_pictures)
 
 
-def update_wallpapers(loaded_wallpapers, loaded_monsters):
+def update_wallpapers(loaded_wallpapers, loaded_monsters, loaded_bosses):
     pygame.mouse.set_visible(False)
     mouse_x, mouse_y = pygame.mouse.get_pos()
     if mouse_x <= 0:
@@ -62,7 +57,10 @@ def update_wallpapers(loaded_wallpapers, loaded_monsters):
          )
     for picture, (pic_name, x, y) in zip(loaded_wallpapers, positions_of_pictures):
         screen.blit(picture, (x, y))
-    screen.blit(loaded_monsters[0], (680, 330))
+    if monster_test.check_for_boss():
+        screen.blit(loaded_bosses[0], (680, 330))
+    else:
+        screen.blit(loaded_monsters[0], (680, 330))
     screen.blit(loaded_wallpapers[-1], (mouse_x, mouse_y))  # mouse must blit last to overlap all the other pictures
 
 
@@ -73,15 +71,12 @@ pygame.display.set_caption('Clicker game')
 # worker
 worker = [pygame.image.load(f'worker_wallpaper/worker.png')]
 monster_test = Monster()
-click_test = ClickBuff()
+click_test = ClickBuff(100)
 
-all_wallpapers, all_monsters = load_wallpapers()
-######################### TEST ###################################
-mobs = deque(["normal"] * 9 + ["boss"] + ["normal"] * 9 + ["boss"])
-####################################################################
+all_wallpapers, all_monsters, all_bosses = load_wallpapers()
 run = True
 while run:
-    update_wallpapers(all_wallpapers, all_monsters)
+    update_wallpapers(all_wallpapers, all_monsters, all_bosses)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -95,19 +90,21 @@ while run:
     ########################################################################
     pygame.font.init()
     font = pygame.font.SysFont('arial bold', 40)
-    text = font.render(f'{monster_test.attacked_monster} / {monster_test.monster_hp}', True, (255, 255, 255))
+    text = font.render(f'{numbers_format(monster_test.attacked_monster)}', True, (255, 255, 255))
     screen.blit(text, (690, 537))
     if collide:
-        if pygame.mouse.get_pressed()[0] and pygame.event.wait():
+        if pygame.mouse.get_pressed()[0]: # and pygame.event.wait():
             monster_test.attack_monster(click_test)
             if monster_test.check_if_dead():
-                all_monsters.rotate(-1)
-                mobs.rotate(-1)
+                if monster_test.check_for_boss():
+                    all_bosses.rotate(-1)
+                else:
+                    all_monsters.rotate(-1)
+                monster_test.prepare_next_level()
+
 
 
     ######################## TESTING ###########################
-    mob_name = font.render(f"{mobs[0]}", True, (200, 200, 200))
-    screen.blit(mob_name, (690, 450))
     level = font.render(f"{monster_test.current_level}", True, (200, 200, 200))
     screen.blit(level, (720, 580))
     ##################################################################
