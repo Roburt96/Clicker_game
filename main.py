@@ -24,6 +24,8 @@ def load_wallpapers():
                   'bg_cursor_images/hp.png',
                   'bg_cursor_images/mine.jpg',
                   'bg_cursor_images/bg_upgrade.jpg',
+                  'bg_cursor_images/arrow_up.png',
+                  'bg_cursor_images/arrow_up.png',
                   'bg_cursor_images/cursor.png')
     loaded_wallpapers = []
     for wallpaper in wallpapers:
@@ -54,6 +56,8 @@ def update_wallpapers(loaded_wallpapers, loaded_monsters, loaded_bosses):
         ("hp", 665, 500),
         ("mine", 700, 0),
         ("bg_upgrade", 0, 100),
+        ('arrow_up', 205, 485),
+        ('arrow_up', 205, 535),
         ("cursor", mouse_x, mouse_y)
          )
     for picture, (pic_name, x, y) in zip(loaded_wallpapers, positions_of_pictures):
@@ -91,7 +95,7 @@ while run:
     collide = rect.collidepoint(point)
     ########################################################################
     pygame.font.init()
-    font = pygame.font.SysFont('arial bold', 40)
+    font = pygame.font.SysFont('arial bold', 32)
     text = font.render(f'{numbers_format(monster_test.attacked_monster)}', True, (255, 255, 255))
     screen.blit(text, (690, 537))
     if collide:
@@ -118,41 +122,48 @@ while run:
     screen.blit(level, (720, 580))
     ##################################################################
     stats = font.render(f"STATISTICS", True, (255, 255, 255))
-    line = font.render(f"___________", True, (255, 255, 255))
     screen.blit(stats, (140, 120))
-    screen.blit(line, (140, 120))
+
 
     # current_gold
     cur_gold_text = font.render(f"Current Gold:", True, (210, 210, 210))
-    screen.blit(cur_gold_text, (10, 170))
-    current_gold = font.render(f"{statistics_test.current_gold}", True, (210, 210, 210))
-    screen.blit(current_gold, (203, 173))
-    line_2 = font.render(f"____________", True, (210, 210, 210))
-    screen.blit(line_2, (10, 170))
+    screen.blit(cur_gold_text, (5, 170))
+    current_gold = font.render(f"{numbers_format(statistics_test.current_gold)}", True, (210, 210, 210))
+    screen.blit(current_gold, (160, 170))
 
     # total_gold_earned
     total_gold_text = font.render(f"Total Gold Earned:", True, (210, 210, 210))
-    total_gold_display = font.render(f"{statistics_test.total_gold}", True, (210, 210, 210))
-    line_3 = font.render(f"________________", True, (210, 210, 210))
-    screen.blit(total_gold_text, (10, 210))
-    screen.blit(total_gold_display, (265, 213))
-    screen.blit(line_3, (10, 210))
+    total_gold_display = font.render(f"{numbers_format(statistics_test.total_gold)}", True, (210, 210, 210))
+    screen.blit(total_gold_text, (5, 210))
+    screen.blit(total_gold_display, (207, 210))
 
     # monster stats
     total_monster_kill = font.render(f"Total monsters kills:", True, (210, 210, 210))
-    total_monster_display = font.render(f"{statistics_test.total_monsters_kills}", True, (210, 210, 210))
-    line_4 = font.render(f"__________________", True, (210, 210, 210))
-    screen.blit(total_monster_kill, (10, 250))
-    screen.blit(line_4, (10, 250))
-    screen.blit(total_monster_display, (290, 253))
+    total_monster_display = font.render(f"{numbers_format(statistics_test.total_monsters_kills)}", True, (210, 210, 210))
+    screen.blit(total_monster_kill, (5, 250))
+    screen.blit(total_monster_display, (230, 250))
 
     # boss stats
     total_boss_kill = font.render(f"Total boss kills:", True, (210, 210, 210))
-    line_5 = font.render(f"______________", True, (210, 210, 210))
-    total_boss_display = font.render(f"{statistics_test.total_boss_kills}", True, (210, 210, 210))
-    screen.blit(total_boss_kill, (10, 290))
-    screen.blit(line_5, (10, 290))
-    screen.blit(total_boss_display, (230, 293))
+
+    total_boss_display = font.render(f"{numbers_format(statistics_test.total_boss_kills)}", True, (210, 210, 210))
+    screen.blit(total_boss_kill, (5, 290))
+    screen.blit(total_boss_display, (180, 290))
+
+    # upgrade cost
+    upgrade = font.render(f"UPGRADES", True, (210, 210, 210))
+    upgrade_dmg = font.render(f"Gold cost:", True, (210, 210, 210))
+    cost_upgrade = font.render(f"DMG", True, (210, 210, 210))
+    screen.blit(upgrade_dmg, (5, 500))
+    screen.blit(cost_upgrade, (315, 480))
+    screen.blit(upgrade, (140, 450))
+
+    # worker cost
+    upgrade = font.render(f"Worker cost:", True, (210, 210, 210))
+    worker = font.render(f"Gold per sec", True, (210, 210, 210))
+    screen.blit(upgrade, (5, 550))
+    screen.blit(worker, (280, 540))
+
 
     pygame.display.update()
 pygame.quit()
