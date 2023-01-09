@@ -33,13 +33,17 @@ class ClickBuff:
         else:
             raise ValueError("Start gold must be integer.")
 
-    def level_up(self):
-        if statis_test.current_gold >= self.start_gold_cost:
+    def level_up(self, stats):
+        if stats.current_gold >= self.start_gold_cost:
             if self.current_level == 0:
-                statis_test.start_dmg += 1
+                stats.start_dmg += 1
+                self.start_damage += 1
                 self.current_level += 1
+                stats.current_gold -= self.start_gold_cost
+                self.start_gold_cost = ceil(self.start_gold_cost * ClickBuff.__GOLD_COST_PER_LEVEL)
             else:
-                statis_test.start_dmg += ceil(self.start_damage * ClickBuff.__DMG_INCREASE_PER_LEVEL)
+                stats.current_gold -= self.start_gold_cost
+                stats.start_dmg = ceil(self.start_damage * ClickBuff.__DMG_INCREASE_PER_LEVEL)
                 self.start_damage = ceil(self.start_damage * ClickBuff.__DMG_INCREASE_PER_LEVEL)
                 self.start_gold_cost = ceil(self.start_gold_cost * ClickBuff.__GOLD_COST_PER_LEVEL)
                 self.current_level += 1
@@ -53,7 +57,7 @@ class ClickBuff:
                f"Current BUFF level - {self.current_level}"
 
 
-statis_test = Statistics()
+
 # test = ClickBuff(1, 3) # this is optional and does not need to be typed
 # test = ClickBuff(50, 50) # if you wish to start with higher values
 #

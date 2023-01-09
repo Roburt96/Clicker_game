@@ -6,6 +6,8 @@ from collections import deque
 from statistics import Statistics
 from worker import Worker
 import button_upgrade
+from time import strftime
+
 
 # screen
 screen = pygame.display.set_mode((1000, 650))
@@ -89,13 +91,10 @@ while run:
     font = pygame.font.SysFont('arial bold', 32)
     text = font.render(f'{numbers_format(monster_test.attacked_monster)}', True, (255, 255, 255))
     screen.blit(text, (690, 537))
-    # action = False
-    # clicked = False
+
     if collide:
         if pygame.mouse.get_pressed()[0] and pygame.event.wait():
 
-            # clicked = True
-            # action = True
             monster_test.attack_monster(click_test)
             if monster_test.check_if_dead():
                 if monster_test.check_for_boss():
@@ -110,9 +109,8 @@ while run:
                     all_monsters.rotate(-1)
 
                 monster_test.prepare_next_level()
-        # else:
-        #     clicked = False
-        #     action = False
+
+
 
 
 
@@ -174,7 +172,6 @@ while run:
     worker_gold = font.render(f"{work.start_gold}", True, (210, 210, 210))
     screen.blit(worker_gold, (243, 400))
 
-
     # upgrade buttons
     upgrade_img = pygame.image.load('bg_cursor_images/blue.png')
     upgrade_button = button_upgrade.ButtonUpgrade(205, 485, upgrade_img, 0.8)
@@ -183,11 +180,19 @@ while run:
     worker_button = button_upgrade.ButtonUpgrade(205, 535, worker_img, 0.8)
 
     if upgrade_button.draw(screen) and pygame.event.wait():
-        click_test.level_up()
+        click_test.level_up(statistics_test)
     
     if worker_button.draw(screen) and pygame.event.wait():
-        work.level_up()
-        
+        work.level_up(statistics_test)
+
+    # worker stuff
+    worker = pygame.image.load('worker_wallpaper/worker.png')
+
+    if work.current_level > 0:
+        current_time = strftime('%S')
+        work.add_gold_from_worker(current_time, statistics_test)
+
+        screen.blit(worker, (850, 50))
 
     # mouse
     mouse = pygame.image.load('bg_cursor_images/cursor.png')
