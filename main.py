@@ -3,6 +3,7 @@ import pygame
 from monster import Monster
 from click_buff import ClickBuff
 from collections import deque
+from statistics import Statistics
 
 # screen
 screen = pygame.display.set_mode((1000, 650))
@@ -71,7 +72,8 @@ pygame.display.set_caption('Clicker game')
 # worker
 worker = [pygame.image.load(f'worker_wallpaper/worker.png')]
 monster_test = Monster()
-click_test = ClickBuff(100)
+click_test = ClickBuff(12)
+statistics_test = Statistics()
 
 all_wallpapers, all_monsters, all_bosses = load_wallpapers()
 run = True
@@ -93,13 +95,20 @@ while run:
     text = font.render(f'{numbers_format(monster_test.attacked_monster)}', True, (255, 255, 255))
     screen.blit(text, (690, 537))
     if collide:
-        if pygame.mouse.get_pressed()[0]: # and pygame.event.wait():
+        if pygame.mouse.get_pressed()[0] and pygame.event.wait():
             monster_test.attack_monster(click_test)
             if monster_test.check_if_dead():
                 if monster_test.check_for_boss():
                     all_bosses.rotate(-1)
+                    statistics_test.current_gold += monster_test.gold_per_boss_kill
+                    statistics_test.total_gold += monster_test.gold_per_boss_kill
+                    statistics_test.total_boss_kills += 1
                 else:
+                    statistics_test.current_gold += monster_test.gold_drop_normal_monster
+                    statistics_test.total_gold += monster_test.gold_drop_normal_monster
+                    statistics_test.total_monsters_kills += 1
                     all_monsters.rotate(-1)
+
                 monster_test.prepare_next_level()
 
 
@@ -108,6 +117,42 @@ while run:
     level = font.render(f"{monster_test.current_level}", True, (200, 200, 200))
     screen.blit(level, (720, 580))
     ##################################################################
+    stats = font.render(f"STATISTICS", True, (255, 255, 255))
+    line = font.render(f"___________", True, (255, 255, 255))
+    screen.blit(stats, (140, 120))
+    screen.blit(line, (140, 120))
+
+    # current_gold
+    cur_gold_text = font.render(f"Current Gold:", True, (210, 210, 210))
+    screen.blit(cur_gold_text, (10, 170))
+    current_gold = font.render(f"{statistics_test.current_gold}", True, (210, 210, 210))
+    screen.blit(current_gold, (203, 173))
+    line_2 = font.render(f"____________", True, (210, 210, 210))
+    screen.blit(line_2, (10, 170))
+
+    # total_gold_earned
+    total_gold_text = font.render(f"Total Gold Earned:", True, (210, 210, 210))
+    total_gold_display = font.render(f"{statistics_test.total_gold}", True, (210, 210, 210))
+    line_3 = font.render(f"________________", True, (210, 210, 210))
+    screen.blit(total_gold_text, (10, 210))
+    screen.blit(total_gold_display, (265, 213))
+    screen.blit(line_3, (10, 210))
+
+    # monster stats
+    total_monster_kill = font.render(f"Total monsters kills:", True, (210, 210, 210))
+    total_monster_display = font.render(f"{statistics_test.total_monsters_kills}", True, (210, 210, 210))
+    line_4 = font.render(f"__________________", True, (210, 210, 210))
+    screen.blit(total_monster_kill, (10, 250))
+    screen.blit(line_4, (10, 250))
+    screen.blit(total_monster_display, (290, 253))
+
+    # boss stats
+    total_boss_kill = font.render(f"Total boss kills:", True, (210, 210, 210))
+    line_5 = font.render(f"______________", True, (210, 210, 210))
+    total_boss_display = font.render(f"{statistics_test.total_boss_kills}", True, (210, 210, 210))
+    screen.blit(total_boss_kill, (10, 290))
+    screen.blit(line_5, (10, 290))
+    screen.blit(total_boss_display, (230, 293))
 
     pygame.display.update()
 pygame.quit()

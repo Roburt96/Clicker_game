@@ -1,5 +1,6 @@
 from math import ceil
 from click_buff import ClickBuff
+from statistics import Statistics
 
 
 class Monster:
@@ -16,6 +17,7 @@ class Monster:
         self.gold_per_boss_kill = gold_per_boss_kill
         self.current_level = 1
         self.dead_monster = False
+        self.current_boss = 0
 
     @property
     def monster_hp(self):
@@ -70,15 +72,20 @@ class Monster:
             return True
 
     def prepare_next_level(self):
+
         self.current_level += 1
         if self.current_level < 10:
             self.gold_drop_normal_monster = 1
         elif self.check_for_boss():
+            self.current_boss += 1
             self.gold_drop_normal_monster = ceil(self.gold_drop_normal_monster *
                                                  Monster.__GOLD_INCREASE_PER_NORMAL_KILL)
             self.boss_health = ceil(self.monster_hp * Monster.__BOSS_HEALTH_INCREASE)
             self.monster_hp = int(self.monster_hp * Monster.__MONSTER_HEALTH_INCREASE_AFTER_LEVEL_10)
-            self.gold_per_boss_kill = ceil(self.gold_per_boss_kill * Monster.__GOLD_INCREASE_PER_BOSS_KILL)
+            if self.current_boss == 1:
+                self.gold_per_boss_kill = 20
+            else:
+                self.gold_per_boss_kill = ceil(self.gold_per_boss_kill * Monster.__GOLD_INCREASE_PER_BOSS_KILL)
             self.attacked_monster = self.boss_health
         if self.current_level < 10 or self.current_level % 10 != 0:
             self.attacked_monster = self.monster_hp
