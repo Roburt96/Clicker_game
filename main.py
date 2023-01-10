@@ -19,7 +19,7 @@ click_test = ClickBuff()
 statistics_test = Statistics()
 work = Worker()
 
-# clock
+
 clock = pygame.time.Clock()
 time_elapsed_since_last_gold_given = 0
 
@@ -76,6 +76,12 @@ def static_function():
     curr_gold_from_worker = font.render(f"Current gold making:", True, (210, 210, 210))
     screen.blit(curr_dps, (10, 360))
     screen.blit(curr_gold_from_worker, (10, 400))
+
+    # lvl
+    lvl_dpc = font.render(f"  lvl: {click_test.current_level}", True, (180, 180, 210))
+    lvl_worker = font.render(f"  lvl: {work.current_level}", True, (180, 180, 210))
+    screen.blit(lvl_dpc, (360, 500))
+    screen.blit(lvl_worker, (360, 550))
 
 
 def load_wallpapers():
