@@ -51,7 +51,8 @@ class Worker:
         if stats.current_gold >= self.start_gold_cost:
             if self.current_level == 0:
                 self.current_level += 1
-                self.start_gold = 3
+                self.start_gold_cost = 18
+                self.start_gold += 3
                 stats.current_gold -= self.start_gold_cost
                 self.start_gold_cost = ceil(self.start_gold_cost * Worker.__GOLD_COST_PER_LEVEL)
             else:

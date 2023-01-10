@@ -9,6 +9,22 @@ import button_upgrade
 
 # screen
 screen = pygame.display.set_mode((1000, 650))
+pygame.font.init()
+font = pygame.font.SysFont('arial bold', 32)
+# title and game icon
+pygame.display.set_caption('Clicker game')
+##### Classes ######
+monster_test = Monster()
+click_test = ClickBuff(200)
+statistics_test = Statistics()
+work = Worker()
+
+# clock
+clock = pygame.time.Clock()
+time_elapsed_since_last_gold_given = 0
+
+# worker
+worker = [pygame.image.load(f'worker_wallpaper/worker.png')]
 
 
 def numbers_format(num):
@@ -18,6 +34,48 @@ def numbers_format(num):
         magnitude += 1
         num /= 1000.0
     return f"{str(num).rstrip('0').rstrip('.')}{['', 'K', 'M', 'B', 'T'][magnitude]}"
+
+
+def static_function():
+    # statistics
+    stats = font.render(f"STATISTICS", True, (255, 255, 255))
+    screen.blit(stats, (140, 120))
+
+    # current_gold
+    cur_gold_text = font.render(f"Current Gold:", True, (210, 210, 210))
+    screen.blit(cur_gold_text, (5, 170))
+
+    # total_gold_earned
+    total_gold_text = font.render(f"Total Gold Earned:", True, (210, 210, 210))
+    screen.blit(total_gold_text, (5, 210))
+
+    # monster stats
+    total_monster_kill = font.render(f"Total monsters kills:", True, (210, 210, 210))
+    screen.blit(total_monster_kill, (5, 250))
+
+    # boss stats
+    total_boss_kill = font.render(f"Total boss kills:", True, (210, 210, 210))
+    screen.blit(total_boss_kill, (5, 290))
+
+    # upgrade cost
+    upgrade = font.render(f"UPGRADES", True, (210, 210, 210))
+    upgrade_dmg = font.render(f"Upgrade damage", True, (210, 210, 210))
+    cost_upgrade = font.render(f"Cost:", True, (210, 210, 210))
+    screen.blit(upgrade_dmg, (5, 500))
+    screen.blit(cost_upgrade, (255, 500))
+    screen.blit(upgrade, (140, 450))
+
+    # worker cost
+    upgrade = font.render(f"Upgrade worker", True, (210, 210, 210))
+    worker_up_cost = font.render(f"Cost:", True, (210, 210, 210))
+    screen.blit(upgrade, (5, 550))
+    screen.blit(worker_up_cost, (255, 550))
+
+    # dps and gold
+    curr_dps = font.render(f"Current DPC:", True, (210, 210, 210))
+    curr_gold_from_worker = font.render(f"Current gold making:", True, (210, 210, 210))
+    screen.blit(curr_dps, (10, 360))
+    screen.blit(curr_gold_from_worker, (10, 400))
 
 
 def load_wallpapers():
@@ -55,37 +113,102 @@ def update_wallpapers(loaded_wallpapers, loaded_monsters, loaded_bosses):
         screen.blit(loaded_monsters[0], (680, 330))
 
 
-# title and game icon
-pygame.display.set_caption('Clicker game')
+def dynamic_function():
+    level = font.render(f"Level: {monster_test.current_level}", True, (255, 255, 255))
+    screen.blit(level, (720, 580))
 
-# worker
-worker = [pygame.image.load(f'worker_wallpaper/worker.png')]
+    # current_gold
 
-##### Classes ######
-monster_test = Monster()
-click_test = ClickBuff(200)
-statistics_test = Statistics()
-work = Worker()
-###############
+    current_gold = font.render(f"{numbers_format(statistics_test.current_gold)}", True, (210, 210, 210))
+    screen.blit(current_gold, (160, 170))
 
-clock = pygame.time.Clock()
-time_elapsed_since_last_gold_given = 0
+    # # total_gold_earned
+
+    total_gold_display = font.render(f"{numbers_format(statistics_test.total_gold)}", True, (210, 210, 210))
+    screen.blit(total_gold_display, (207, 210))
+
+    # # monster stats
+
+    total_monster_display = font.render(f"{numbers_format(statistics_test.total_monsters_kills)}", True,
+                                        (210, 210, 210))
+    screen.blit(total_monster_display, (230, 250))
+
+    # # boss stats
+
+    total_boss_display = font.render(f"{numbers_format(statistics_test.total_boss_kills)}", True, (210, 210, 210))
+    screen.blit(total_boss_display, (180, 290))
+
+    # # upgrade cost
+
+    upgrade_gold = font.render(f"{numbers_format(click_test.start_gold_cost)}", True, (210, 210, 210))
+    screen.blit(upgrade_gold, (315, 500))
+
+    worker_cost = font.render(f"{numbers_format(work.start_gold_cost)}", True, (210, 210, 210))
+    screen.blit(worker_cost, (315, 550))
+
+    dps = font.render(f"{statistics_test.start_dmg}", True, (210, 210, 210))
+    screen.blit(dps, (160, 360))
+    worker_gold = font.render(f"{work.start_gold}", True, (210, 210, 210))
+    screen.blit(worker_gold, (243, 400))
+
+
+def buttons():
+    upgrade_img = pygame.image.load('bg_cursor_images/blue.png')
+    upgrade_button = button_upgrade.ButtonUpgrade(205, 485, upgrade_img, 0.8)
+
+    worker_img = pygame.image.load('bg_cursor_images/yellow.png')
+    worker_button = button_upgrade.ButtonUpgrade(205, 535, worker_img, 0.8)
+
+    if upgrade_button.draw(screen) and pygame.event.wait():
+        click_test.level_up(statistics_test)
+
+    if worker_button.draw(screen) and pygame.event.wait():
+        work.level_up(statistics_test)
+
+
+def mouse_vis():
+    mouse = pygame.image.load('bg_cursor_images/cursor.png')
+    pygame.mouse.set_visible(False)
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+    if mouse_x <= 0:
+        mouse_x = 0
+    elif mouse_x >= 970:
+        mouse_x = 970
+    elif mouse_y >= 620:
+        mouse_y = 620
+    screen.blit(mouse, (mouse_x, mouse_y))
+
+
+def worker_vis():
+    global time_elapsed_since_last_gold_given
+
+    worker = pygame.image.load('worker_wallpaper/worker.png')
+    dt = clock.tick()
+    if work.bought_worker:
+        time_elapsed_since_last_gold_given += dt
+        if time_elapsed_since_last_gold_given >= work.seconds_for_gold * 1000:
+            work.add_gold_from_worker(statistics_test)
+            time_elapsed_since_last_gold_given = 0
+        screen.blit(worker, (850, 50))
+
 
 all_wallpapers, all_monsters, all_bosses = load_wallpapers()
 is_attacking = False
 run = True
 while run:
+
     update_wallpapers(all_wallpapers, all_monsters, all_bosses)
+    dynamic_function()
+    static_function()
+    worker_vis()
+
     fps = pygame.time.Clock().tick(60)
 
-    ################# MOST LIKELY WILL BE REMOVED #########################
     rect = pygame.Rect(*screen.get_rect().center, 0, 0).inflate(200, 200)
     rect = pygame.Rect.move(rect, 250, 70)
     point = pygame.mouse.get_pos()
     collide = rect.collidepoint(point)
-    ########################################################################
-    pygame.font.init()
-    font = pygame.font.SysFont('arial bold', 32)
+
     text = font.render(f'{numbers_format(monster_test.attacked_monster)}', True, (255, 255, 255))
     screen.blit(text, (690, 537))
 
@@ -111,100 +234,7 @@ while run:
         elif event.type == pygame.MOUSEBUTTONUP:
             is_attacking = False
 
-
-    ######################## TESTING ###########################
-    level = font.render(f"{monster_test.current_level}", True, (200, 200, 200))
-    screen.blit(level, (720, 580))
-    ##################################################################
-    stats = font.render(f"STATISTICS", True, (255, 255, 255))
-    screen.blit(stats, (140, 120))
-
-    # current_gold
-    cur_gold_text = font.render(f"Current Gold:", True, (210, 210, 210))
-    screen.blit(cur_gold_text, (5, 170))
-    current_gold = font.render(f"{numbers_format(statistics_test.current_gold)}", True, (210, 210, 210))
-    screen.blit(current_gold, (160, 170))
-
-    # total_gold_earned
-    total_gold_text = font.render(f"Total Gold Earned:", True, (210, 210, 210))
-    total_gold_display = font.render(f"{numbers_format(statistics_test.total_gold)}", True, (210, 210, 210))
-    screen.blit(total_gold_text, (5, 210))
-    screen.blit(total_gold_display, (207, 210))
-
-    # monster stats
-    total_monster_kill = font.render(f"Total monsters kills:", True, (210, 210, 210))
-    total_monster_display = font.render(f"{numbers_format(statistics_test.total_monsters_kills)}", True,
-                                        (210, 210, 210))
-    screen.blit(total_monster_kill, (5, 250))
-    screen.blit(total_monster_display, (230, 250))
-
-    # boss stats
-    total_boss_kill = font.render(f"Total boss kills:", True, (210, 210, 210))
-
-    total_boss_display = font.render(f"{numbers_format(statistics_test.total_boss_kills)}", True, (210, 210, 210))
-    screen.blit(total_boss_kill, (5, 290))
-    screen.blit(total_boss_display, (180, 290))
-
-    # upgrade cost
-    upgrade = font.render(f"UPGRADES", True, (210, 210, 210))
-    upgrade_dmg = font.render(f"Upgrade damage", True, (210, 210, 210))
-    cost_upgrade = font.render(f"Cost:", True, (210, 210, 210))
-    screen.blit(upgrade_dmg, (5, 500))
-    screen.blit(cost_upgrade, (255, 500))
-    screen.blit(upgrade, (140, 450))
-
-    # worker cost
-    upgrade = font.render(f"Upgrade worker", True, (210, 210, 210))
-    worker = font.render(f"Cost:", True, (210, 210, 210))
-    screen.blit(upgrade, (5, 550))
-    screen.blit(worker, (255, 550))
-
-    # dps and gold
-    curr_dps = font.render(f"Current DPC:", True, (210, 210, 210))
-    curr_gold_from_worker = font.render(f"Current gold making:", True, (210, 210, 210))
-    screen.blit(curr_dps, (10, 360))
-    screen.blit(curr_gold_from_worker, (10, 400))
-    dps = font.render(f"{statistics_test.start_dmg}", True, (210, 210, 210))
-    screen.blit(dps, (160, 360))
-
-    worker_gold = font.render(f"{work.start_gold}", True, (210, 210, 210))
-    screen.blit(worker_gold, (243, 400))
-
-    # upgrade buttons
-    upgrade_img = pygame.image.load('bg_cursor_images/blue.png')
-    upgrade_button = button_upgrade.ButtonUpgrade(205, 485, upgrade_img, 0.8)
-
-    worker_img = pygame.image.load('bg_cursor_images/yellow.png')
-    worker_button = button_upgrade.ButtonUpgrade(205, 535, worker_img, 0.8)
-
-    if upgrade_button.draw(screen) and pygame.event.wait():
-        click_test.level_up(statistics_test)
-
-    if worker_button.draw(screen) and pygame.event.wait():
-        work.level_up(statistics_test)
-
-    # worker stuff
-    worker = pygame.image.load('worker_wallpaper/worker.png')
-
-    dt = clock.tick()
-    if work.bought_worker:
-        time_elapsed_since_last_gold_given += dt
-        if time_elapsed_since_last_gold_given >= work.seconds_for_gold * 1000:
-            work.add_gold_from_worker(statistics_test)
-            time_elapsed_since_last_gold_given = 0
-        screen.blit(worker, (850, 50))
-
-    # mouse
-    mouse = pygame.image.load('bg_cursor_images/cursor.png')
-    pygame.mouse.set_visible(False)
-    mouse_x, mouse_y = pygame.mouse.get_pos()
-    if mouse_x <= 0:
-        mouse_x = 0
-    elif mouse_x >= 970:
-        mouse_x = 970
-    elif mouse_y >= 620:
-        mouse_y = 620
-    screen.blit(mouse, (mouse_x, mouse_y))
-
+    buttons()
+    mouse_vis()
     pygame.display.update()
 pygame.quit()
