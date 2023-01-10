@@ -11,6 +11,7 @@ class Worker:
         self.start_gold = start_gold
         self.start_gold_cost = start_gold_cost
         self.seconds_for_gold = seconds_for_gold
+        self.bought_worker = False
         self.current_level = 0
 
     @property
@@ -59,20 +60,15 @@ class Worker:
                 stats.current_gold -= self.start_gold_cost
                 stats.current_gold += ceil(self.start_gold * Worker.__GOLD_INCREASE_PER_LEVEL)
                 self.current_level += 1
+            self.bought_worker = True
 
         else:
             print('no gold')
 
-    def add_gold_from_worker(self, sec, stats):
+    def add_gold_from_worker(self, stats):
         if self.current_level % 6 == 0:
             self.seconds_for_gold -= Worker.__SEC_DECREASE_PER_6_LEVELS
             if self.seconds_for_gold <= 0:
                 self.seconds_for_gold = 1
-
-        if int(sec) % self.seconds_for_gold == 0:
-            print(self.start_gold)
-            stats.current_gold += self.start_gold
-            stats.total_gold += self.start_gold
-
-
-stat_test = Statistics()
+        stats.current_gold += self.start_gold
+        stats.total_gold += self.start_gold

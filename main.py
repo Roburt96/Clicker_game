@@ -6,8 +6,6 @@ from collections import deque
 from statistics import Statistics
 from worker import Worker
 import button_upgrade
-from time import strftime
-
 
 # screen
 screen = pygame.display.set_mode((1000, 650))
@@ -57,29 +55,28 @@ def update_wallpapers(loaded_wallpapers, loaded_monsters, loaded_bosses):
         screen.blit(loaded_monsters[0], (680, 330))
 
 
-
 # title and game icon
 pygame.display.set_caption('Clicker game')
-
 
 # worker
 worker = [pygame.image.load(f'worker_wallpaper/worker.png')]
 
 ##### Classes ######
 monster_test = Monster()
-click_test = ClickBuff()
+click_test = ClickBuff(200)
 statistics_test = Statistics()
 work = Worker()
 ###############
 
+clock = pygame.time.Clock()
+time_elapsed_since_last_gold_given = 0
+
 all_wallpapers, all_monsters, all_bosses = load_wallpapers()
+is_attacking = False
 run = True
 while run:
     update_wallpapers(all_wallpapers, all_monsters, all_bosses)
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            run = False
+    fps = pygame.time.Clock().tick(60)
 
     ################# MOST LIKELY WILL BE REMOVED #########################
     rect = pygame.Rect(*screen.get_rect().center, 0, 0).inflate(200, 200)
@@ -92,9 +89,12 @@ while run:
     text = font.render(f'{numbers_format(monster_test.attacked_monster)}', True, (255, 255, 255))
     screen.blit(text, (690, 537))
 
-    if collide:
-        if pygame.mouse.get_pressed()[0] and pygame.event.wait():
-
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
+        left_click, middle_click, right_click = pygame.mouse.get_pressed()
+        if event.type == pygame.MOUSEBUTTONDOWN and left_click and collide and not is_attacking:
+            is_attacking = True
             monster_test.attack_monster(click_test)
             if monster_test.check_if_dead():
                 if monster_test.check_for_boss():
@@ -107,11 +107,9 @@ while run:
                     statistics_test.total_gold += monster_test.gold_drop_normal_monster
                     statistics_test.total_monsters_kills += 1
                     all_monsters.rotate(-1)
-
                 monster_test.prepare_next_level()
-
-
-
+        elif event.type == pygame.MOUSEBUTTONUP:
+            is_attacking = False
 
 
     ######################## TESTING ###########################
@@ -120,7 +118,6 @@ while run:
     ##################################################################
     stats = font.render(f"STATISTICS", True, (255, 255, 255))
     screen.blit(stats, (140, 120))
-
 
     # current_gold
     cur_gold_text = font.render(f"Current Gold:", True, (210, 210, 210))
@@ -136,7 +133,8 @@ while run:
 
     # monster stats
     total_monster_kill = font.render(f"Total monsters kills:", True, (210, 210, 210))
-    total_monster_display = font.render(f"{numbers_format(statistics_test.total_monsters_kills)}", True, (210, 210, 210))
+    total_monster_display = font.render(f"{numbers_format(statistics_test.total_monsters_kills)}", True,
+                                        (210, 210, 210))
     screen.blit(total_monster_kill, (5, 250))
     screen.blit(total_monster_display, (230, 250))
 
@@ -181,17 +179,19 @@ while run:
 
     if upgrade_button.draw(screen) and pygame.event.wait():
         click_test.level_up(statistics_test)
-    
+
     if worker_button.draw(screen) and pygame.event.wait():
         work.level_up(statistics_test)
 
     # worker stuff
     worker = pygame.image.load('worker_wallpaper/worker.png')
 
-    if work.current_level > 0:
-        current_time = strftime('%S')
-        work.add_gold_from_worker(current_time, statistics_test)
-
+    dt = clock.tick()
+    if work.bought_worker:
+        time_elapsed_since_last_gold_given += dt
+        if time_elapsed_since_last_gold_given >= work.seconds_for_gold * 1000:
+            work.add_gold_from_worker(statistics_test)
+            time_elapsed_since_last_gold_given = 0
         screen.blit(worker, (850, 50))
 
     # mouse
