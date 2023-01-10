@@ -15,7 +15,7 @@ font = pygame.font.SysFont('arial bold', 32)
 pygame.display.set_caption('Clicker game')
 ##### Classes ######
 monster_test = Monster()
-click_test = ClickBuff(200)
+click_test = ClickBuff()
 statistics_test = Statistics()
 work = Worker()
 
